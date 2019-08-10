@@ -1,6 +1,6 @@
 <template>
   <div class="conser">
-    <el-row :gutter="20">
+    <el-row :gutter="20" @click.native="toWebsite">
       <!-- 酒店图片 -->
       <el-col :span="8">
         <div class="box1">
@@ -11,7 +11,7 @@
       <el-col :span="10">
         <div class="box2">
           <h4>
-            <a href="#">{{data.name}}</a>
+            <a href="/hotel/hoteldetail">{{data.name}}</a>
           </h4>
 
           <div class="hao">
@@ -93,6 +93,11 @@ export default {
       value: this.data.stars,
       tableData: this.products
     };
+  },
+  methods:{
+    toWebsite(){
+      this.$router.push('/hotel/hoteldetail')
+    }
   }
 };
 </script>
