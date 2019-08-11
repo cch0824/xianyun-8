@@ -48,7 +48,7 @@
         <!-- 文件上传 -->
         <div class="upload">
           <el-upload
-            action="http://127.0.0.1:1337/upload"
+            :action="$axios.defaults.baseURL+'/upload'"
             list-type="picture-card"
             :on-remove="handleRemove"
             :on-success="uploadAdd"
@@ -69,19 +69,23 @@
     </div>
     <!-- 历史评论 -->
     <div class="history" v-if="total!==0">
-      <div class="first" v-for="(first,index) in currCmtList" :key="index">
+      <div class="first" v-for="(item,index) in currCmtList" :key="index">
         <div class="user">
-          <img :src="`${$axios.defaults.baseURL+first.account.defaultAvatar}`" alt />
-          <span>{{first.account.nickname}}</span>
-          <i>{{first.account.updated_at|gettimer}}</i>
+          <img :src="`${$axios.defaults.baseURL+item.account.defaultAvatar}`" alt />
+          <span>{{item.account.nickname}}</span>
+          <i>{{item.account.updated_at|gettimer}}</i>
+          <span class="level">{{item.level}}</span>
         </div>
-        <div class="second" v-if="first.parent">
-          <!-- 组件 -->
-          <Comment :data="first.parent">
-          </Comment>
-        </div>
-        <p class="text">{{first.content}}</p>
-        <nuxt-link to="#" @click.native="toreply(first)" class="reply">回复</nuxt-link>
+        <!-- 组件 -->
+        <Comment class="second" v-if="item.parent" :data="item.parent"></Comment>
+        <p class="text">{{item.content}}</p>
+        <img
+          class="commImg"
+          v-for="(pic, index2) in item.pics"
+          :key="index2"
+          :src="$axios.defaults.baseURL +pic.url"
+        />
+        <nuxt-link to="#" @click.native="toreply(item)" class="reply">回复</nuxt-link>
       </div>
     </div>
     <!-- 评论为空时显示 -->
@@ -125,16 +129,16 @@ export default {
         content: "", //文字内容
         pics: [], //图片
         post: this.$route.query.id, //评论id
-        follow:{}
+        follow: {}
       },
-      fileList:[]
+      fileList: []
     };
   },
   methods: {
     // 点击回复
-    toreply(item){
+    toreply(item) {
       // console.log(item);
-      this.commData.follow=item
+      this.commData.follow = item;
     },
     // 提交评论
     commentsSubmit() {
@@ -149,8 +153,8 @@ export default {
         this.$message.success(res.data.message);
         this.commData.content = "";
         this.commData.pics = [];
-        this.fileList=[]
-        this.commData.follow={}
+        this.fileList = [];
+        this.commData.follow = {};
         this.getComment();
       });
     },
@@ -180,11 +184,11 @@ export default {
     },
     // 移除文件时触发
     handleRemove(file, fileList) {
-      let arr=[file.response[0]]
+      let arr = [file.response[0]];
       for (let i = 0; i < this.commData.pics.length; i++) {
-       if(this.commData.pics[i]==out){
-         this.commData.pics.splice(i,1)
-       }
+        if (this.commData.pics[i] == out) {
+          this.commData.pics.splice(i, 1);
+        }
       }
     },
     // 文件上传成功时的钩子
@@ -266,11 +270,6 @@ export default {
     padding: 25px 0;
     border-bottom: 1px solid #ccc;
   }
-  // p {
-  //   text-align: right;
-  //   color: #999;
-  //   margin: 20px 10px;
-  // }
 }
 .edit {
   margin: 50px 0 20px 0;
@@ -340,7 +339,9 @@ export default {
   border: 1px solid #ccc;
   background-color: #f9f9f9;
 }
-
+.commImg {
+  width: 100px;
+}
 .level {
   float: right;
 }

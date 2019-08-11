@@ -1,12 +1,18 @@
 <template>
-    <div class="user" >
-      <span>{{data&&data.account&&data.account.nickname}}</span>
-      <i>{{data&&data.account&&data.account.updated_at|gettimer}}</i>
-      <!-- <img v-for="(pic,i) in data.pics" :key="i" :src="`${pic.name}`" alt /> -->
-      <p class="text">{{data&&data.content}}</p>
-      <nuxt-link to="#" @click="toreply(data)" class="reply">回复</nuxt-link>
-      <items v-for="(second,index) in data&&data.parent" :key="index" :data="second"/>
-    </div>
+  <div class="user">
+    <span>{{data&&data.account&&data.account.nickname}}</span>
+    <i>{{data&&data.account&&data.account.updated_at|gettimer}}</i>
+    <span class="level">{{data.level}}</span>
+    <p class="text">{{data&&data.content}}</p>
+    <img
+      class="commImg"
+      v-for="(pic, index2) in data.pics"
+      :key="index2"
+      :src="$axios.defaults.baseURL +pic.url"
+    />
+    <nuxt-link to="#" @click="toreply(data)" class="reply">回复</nuxt-link>
+    <items v-if="data.parent" :data="data.parent" />
+  </div>
 </template>
 
 <script>
@@ -25,7 +31,7 @@ export default {
   },
   methods: {
     // 回复评论
-    toreply(data){
+    toreply(data) {
       console.log(data);
     }
   },
@@ -67,5 +73,9 @@ i {
   color: #666;
   margin-top: -7px;
   color: #1e50a2;
+}
+.commImg {
+  width: 100px;
+  height: 100px;
 }
 </style>
